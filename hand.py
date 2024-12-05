@@ -35,7 +35,7 @@ def print_result(result: HandLandmarkerResult, output_image: mp.Image, timestamp
 
 
 options = HandLandmarkerOptions(
-    base_options=BaseOptions(model_asset_path='C:/Users/Kompyuter/Desktop/newhand/hand_landmarker.task'),
+    base_options=BaseOptions(model_asset_path='C:/Users/06malhol/handgit/hand_landmarker.task'),
     running_mode=VisionRunningMode.LIVE_STREAM,
     result_callback=print_result
     )
