@@ -75,11 +75,11 @@ options = HandLandmarkerOptions(
     result_callback=print_result
     )
 
-#Maybe try if this works without the "with" keyword
-
 landmarker = HandLandmarker.create_from_options(options)
 
-cap = cv.VideoCapture(4, cv.CAP_DSHOW)
+cap = cv.VideoCapture(4)
+
+timestamp_ms = 0
     
 if not cap.isOpened():
         print("Cannot open camera")
@@ -91,11 +91,9 @@ while True:
         print("Can't receive frame (stream end?). Exiting ...")
         break
 
-    #cv.imshow("Feed", frame) 
-
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
 
-    timestamp_ms = int(time.time() * 1000)
+    timestamp_ms += 1
 
     landmarker.detect_async(mp_image, timestamp_ms)
 cap.release()
