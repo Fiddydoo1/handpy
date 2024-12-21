@@ -1,102 +1,57 @@
-
-import time
+import cv2
 import mediapipe as mp
-from mediapipe.tasks import python
-from mediapipe.tasks.python import vision
-from mediapipe import solutions
-from mediapipe.framework.formats import landmark_pb2
+import time
+from subprocess import call
 import numpy as np
-import cv2 as cv
-import pylab as plt
-import threading
-
-BaseOptions = mp.tasks.BaseOptions
-HandLandmarker = mp.tasks.vision.HandLandmarker
-HandLandmarkerOptions = mp.tasks.vision.HandLandmarkerOptions
-HandLandmarkerResult = mp.tasks.vision.HandLandmarkerResult
-VisionRunningMode = mp.tasks.vision.RunningMode
-mp_hands = mp.solutions.hands
-mp_drawing = mp.solutions.drawing_utils
-
-MARGIN = 10  # pixels
-FONT_SIZE = 1
-FONT_THICKNESS = 1
-HANDEDNESS_TEXT_COLOR = (88, 205, 54) # vibrant green
-
-def draw_landmarks_on_image(rgb_image, detection_result):
-   hand_landmarks_list = detection_result.hand_landmarks
-   handedness_list = detection_result.handedness
-   annotated_image = np.copy(rgb_image)
-
-  # Loop through the detected hands to visualize.
-   for idx in range(len(hand_landmarks_list)):
-     hand_landmarks = hand_landmarks_list[idx]
-     handedness = handedness_list[idx]
-
-    # Draw the hand landmarks.
-     hand_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
-     hand_landmarks_proto.landmark.extend([
-       landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y, z=landmark.z) for landmark in hand_landmarks
-     ])
-     solutions.drawing_utils.draw_landmarks(
-       annotated_image,
-       hand_landmarks_proto,
-       solutions.hands.HAND_CONNECTIONS,
-       solutions.drawing_styles.get_default_hand_landmarks_style(),
-       solutions.drawing_styles.get_default_hand_connections_style())
-
-    # Get the top left corner of the detected hand's bounding box.
-     height, width, _ = annotated_image.shape
-     x_coordinates = [landmark.x for landmark in hand_landmarks]
-     y_coordinates = [landmark.y for landmark in hand_landmarks]
-     text_x = int(min(x_coordinates) * width)
-     text_y = int(min(y_coordinates) * height) - MARGIN
-
-    # Draw handedness (left or right hand) on the image.
-     cv.putText(annotated_image, f"{handedness[0].category_name}",
-                 (text_x, text_y), cv.FONT_HERSHEY_DUPLEX,
-                 FONT_SIZE, HANDEDNESS_TEXT_COLOR, FONT_THICKNESS, cv.LINE_AA)
-
-   return annotated_image
-
-def print_result(result: HandLandmarkerResult, output_image: mp.Image, timestamp_ms: int):
-
-    annotated_image = draw_landmarks_on_image(output_image.numpy_view(), result)
-    
-    cv.imshow("that", annotated_image)
-        
-    if cv.waitKey(1) & 0xFF == ord('q'):
-        exit()
-    
-        
-options = HandLandmarkerOptions(
-    base_options=BaseOptions(model_asset_path='C:/Users/Kompyuter/Desktop/newhand/hand_landmarker.task'),
-    running_mode=VisionRunningMode.LIVE_STREAM,
-    result_callback=print_result
-    )
-
-landmarker = HandLandmarker.create_from_options(options)
-
-cap = cv.VideoCapture(4)
-
-timestamp_ms = 0
-    
-if not cap.isOpened():
-        print("Cannot open camera")
-        exit()
+INDEX_FINGER_IDX = 8
+THUMB_IDX = 4
+VOLUME_UPDATE_INTERVAL = 15
+#opening camera (0 for the default camera)
+videoCap = cv2.VideoCapture(4)
+lastFrameTime = 0
+frame = 0
+max_diff = 0
+min_diff = 100000
+handSolution = mp.solutions.hands
+hands = handSolution.Hands()
 while True:
-    ret, frame = cap.read()
-
-    if not ret:
-        print("Can't receive frame (stream end?). Exiting ...")
-        break
-
-    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
-
-    timestamp_ms += 1
-
-    landmarker.detect_async(mp_image, timestamp_ms)
-cap.release()
-cv.destroyAllWindows
-   
-    
+    frame += 1
+    #reading image
+    success, img = videoCap.read()
+    #showing image on separate window (only if read was successfull)
+    if success:
+        imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        #fps calculations
+        thisFrameTime = time.time()
+        fps = 1 / (thisFrameTime - lastFrameTime)
+        lastFrameTime = thisFrameTime
+        #write on image fps
+        cv2.putText(img, f'FPS:{int(fps)}',
+                    (20, 70),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        #recognize hands from out image
+        recHands = hands.process(img)
+        if recHands.multi_hand_landmarks:
+            for hand in recHands.multi_hand_landmarks:
+                #draw the dots on each our image for vizual help
+                for datapoint_id, point in enumerate(hand.landmark):
+                    h, w, c = img.shape
+                    x, y = int(point.x * w), int(point.y * h)
+                    cv2.circle(img, (x, y),
+                               10, (255, 0, 255)
+                               , cv2.FILLED)
+            if frame % VOLUME_UPDATE_INTERVAL == 0:
+                thumb_y = hand.landmark[THUMB_IDX].y
+                index_y = hand.landmark[INDEX_FINGER_IDX].y
+                distance = thumb_y * h - index_y * h
+                #calibrate min and max difference
+                min_diff = np.minimum(distance + 50, min_diff)
+                max_diff = np.maximum(distance, max_diff)
+                #change volume on mac os
+                call(["osascript -e 'set volume output volume {}'"
+                      .format(np.clip(
+                              (distance/(max_diff - min_diff)*100),
+                                      0, 100))], shell=True)
+                frame = 0
+        cv2.imshow("CamOutput", img)
+        cv2.waitKey(1)
