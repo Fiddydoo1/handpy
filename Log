@@ -3,3 +3,8 @@ I can try to debug why the program is so slow by removing all of the other thing
 Maybe the documentation on that google website is just old or something. Using something like mp.solutions.hands seems to work better and is even what chatGPT suggested
 
 Follow dimensions on docs in frame size test gesture recognizer model. Create own model with mediapipe model maker
+
+Other things I can do to make my code better:
+GPU acceleration
+Paralell processing
+Skip some frames for processing.
