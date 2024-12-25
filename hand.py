@@ -38,7 +38,7 @@ while True:
                     h, w, c = img.shape
                     x, y = int(point.x * w), int(point.y * h)
                     cv2.circle(img, (x, y),
-                               10, (255, 0, 255)
+                               10, (0, 255, 0)
                                , cv2.FILLED)
             if frame % VOLUME_UPDATE_INTERVAL == 0:
                 thumb_y = hand.landmark[THUMB_IDX].y
