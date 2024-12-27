@@ -1,14 +1,21 @@
 I can try to debug why the program is so slow by removing all of the other things in the draw_landmarks_on_image function but still keeping the return statement
+(tried this)
 
 Maybe the documentation on that google website is just old or something. Using something like mp.solutions.hands seems to work better and is even what chatGPT suggested
 
-Follow dimensions on docs in frame size. (I think the numbers that were on the page were just the neural network sizes)
+Follow dimensions on docs in frame size. 
+(I think the numbers that were on the page were just the neural network sizes)
 
 Test gesture recognizer model. Create own model with mediapipe model maker.
+(Gonna do this)
 
 Other things I can do to make my code better:
 GPU acceleration
 Paralell processing
 Skip some frames for processing.
 
+(Skipping frames is something I can try, parallell processing or GPU acceleration might be too hard)
+
 The detect async method has an additional argument for image processing options, however the only options are to crop the image or rotate it 90 degrees in a direction.
+
+The visualization of the program might make the program lag but might not be laggy in of itself when looking at for example print statements for data.
