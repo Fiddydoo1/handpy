@@ -19,3 +19,6 @@ Skip some frames for processing.
 The detect async method has an additional argument for image processing options, however the only options are to crop the image or rotate it 90 degrees in a direction.
 
 The visualization of the program might make the program lag but might not be laggy in of itself when looking at for example print statements for data.
+
+I want to test the program but because the mediapipe-model-maker library uses an older version of Python some other things like tensorflow or something don't work and
+I can't use the library.
