@@ -22,3 +22,6 @@ The visualization of the program might make the program lag but might not be lag
 
 I want to test the program but because the mediapipe-model-maker library uses an older version of Python some other things like tensorflow or something don't work and
 I can't use the library.
+
+One Github issue made said that a dependency that mediapipe-model-maker requires which is like tensorflow text or something stopped receiving support for windows.
+There is a complicated workaround for Windows that might work but maybe I should try to see if it works on Arch Linux.
