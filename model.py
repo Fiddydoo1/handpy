@@ -22,6 +22,6 @@ model = gesture_recognizer.GestureRecognizer.create(
 loss, acc = model.evaluate(test_data, batch_size=1)
 print(f"Test loss:{loss}, Test accuracy:{acc}")
 model.export_model()
-!ls exported_model
+#!ls exported_model
 
-files.download('exported_model/gesture_recognizer.task')
+#files.download('exported_model/gesture_recognizer.task')
