@@ -6,6 +6,9 @@ from mediapipe_model_maker import gesture_recognizer
 
 import matplotlib.pyplot as plt
 
+#path for the dataset
+dataset_path = ""
+
 data = gesture_recognizer.Dataset.from_folder(
     dirname=dataset_path,
     hparams=gesture_recognizer.HandDataPreprocessingParams()
