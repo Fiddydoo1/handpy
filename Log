@@ -27,3 +27,11 @@ I can't use the library.
 One Github issue made said that a dependency that mediapipe-model-maker requires which is like tensorflow text or something stopped receiving support for windows.
 There is a complicated workaround for Windows that might work but maybe I should try to see if it works on Arch Linux.
 Another thing that I could do is to install the packages in a virtual environment or use WSL.
+
+Installing in a virtual environment in Arch Linux made it work with python 3.10
+
+I managed to create a model that works but the first time I tried it didn't
+and the second time where I did the exact same thng it suddenly worked.
+The third time I tried to make the model it didn't work again
+I think this could have to do with that I'm not using a fresh directory each time or something.
+I should try updating the system first though.
