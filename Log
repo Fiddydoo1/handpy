@@ -35,3 +35,7 @@ and the second time where I did the exact same thng it suddenly worked.
 The third time I tried to make the model it didn't work again
 I think this could have to do with that I'm not using a fresh directory each time or something.
 I should try updating the system first though.
+
+I updated the system and I did have to use a new directory for it to work and I got a pretty good model.
+
+Now the next step is simply to find some library or something that can display visuals on the screen if the "middle" gesture is detected
